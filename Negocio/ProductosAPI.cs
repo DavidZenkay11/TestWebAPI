@@ -17,7 +17,16 @@ namespace Negocio
 
         public Producto GetById(int id)
         {
-            return Datos.listaProductos.Where(item => item.Id == id).First();
+            // Buscar el producto por id, si no lo encuentra devuelve null
+            var producto = Datos.listaProductos.FirstOrDefault(item => item.Id == id);
+
+            // Comprobar si el producto es null (no se encontró)
+            if (producto == null)
+            {
+                throw new KeyNotFoundException($"Producto con Id {id} no encontrado."); // Lanza una excepción personalizada
+            }
+
+            return producto;
         }
         public void Update(Producto producto) { }
         public int Delete(int id)

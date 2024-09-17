@@ -13,37 +13,63 @@ namespace TestWebAPI
 
         // GET: api/<ValuesController>/products
         [HttpGet("products")]
-        public List<Producto> Get()
+        public IActionResult Get()
         {
-            return api.GetAll();
+            var productos = api.GetAll();
+
+            if (productos == null || !productos.Any())
+            {
+                return NoContent(); // 204 No Content
+            }
+
+            return Ok(productos); // 200 OK
         }
 
         // GET api/<ValuesController>/products/5
         [HttpGet("products/{id}")]
-        public Producto Get(int id)
+        public IActionResult Get(int id)
         {
-            return api.GetById(id);
+            var producto = api.GetById(id);
+
+            if (producto == null)
+            {
+                return NotFound(); // 404 Not Found
+            }
+
+            return Ok(producto); // 200 OK
         }
 
         // POST api/<ValuesController>/products
         [HttpPost("products")]
-        public Producto Post([FromBody] Producto producto)
+        public IActionResult Post([FromBody] Producto producto)
         {
-            return api.Post(producto);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var productoCreado = api.Post(producto);
+            return StatusCode(201, productoCreado);
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut]
-        public Producto Put([FromBody] Producto product)
+        [HttpPut("products")]
+        public IActionResult Put([FromBody] Producto product)
         {
-            return api.Put(product);
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var productoActualizado = api.Put(product);
+            return Ok(productoActualizado);
+        }
         // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("products/{id}")]
+        public IActionResult Delete(int id)
         {
             api.Delete(id);
+            return NoContent(); // 204 No Content
         }
     }
 }
