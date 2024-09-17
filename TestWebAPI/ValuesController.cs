@@ -19,7 +19,7 @@ namespace TestWebAPI
 
             if (productos == null || !productos.Any())
             {
-                return NoContent(); // 204 No Content
+                return NoContent(); // 204 No Content no hay productos
             }
 
             return Ok(productos); // 200 OK
@@ -33,7 +33,7 @@ namespace TestWebAPI
 
             if (producto == null)
             {
-                return NotFound(); // 404 Not Found
+                return NotFound(); // 404 Not Found no se encontró el producto con esa ID
             }
 
             return Ok(producto); // 200 OK
@@ -45,7 +45,7 @@ namespace TestWebAPI
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState); // Devuelve 400 Bad Request.
             }
 
             var productoCreado = api.Post(producto);
@@ -53,23 +53,36 @@ namespace TestWebAPI
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut("products")]
-        public IActionResult Put([FromBody] Producto product)
+        [HttpPut("products/{id}")]
+        public IActionResult Put(int id, [FromBody] Producto product)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState); // Devuelve 400 Bad Request.
             }
+            product.Id = id;
 
             var productoActualizado = api.Put(product);
-            return Ok(productoActualizado);
+
+            if (productoActualizado == null)
+            {
+                return NotFound(); // 404 Not Found el producto no existe para actualizar
+            } else { return Ok(productoActualizado); }
+
+
         }
         // DELETE api/<ValuesController>/5
         [HttpDelete("products/{id}")]
         public IActionResult Delete(int id)
         {
-            api.Delete(id);
-            return NoContent(); // 204 No Content
+            var eliminado = api.Delete(id);
+
+            if (eliminado == 0) //Si no borró nada eliminado debería dar 0 dando el 404.
+            {
+                return NotFound(); // 404 Not Found el producto no existe para eliminar
+            }
+
+            return NoContent(); // 204 No Content si funcionó correctamente
         }
     }
 }
