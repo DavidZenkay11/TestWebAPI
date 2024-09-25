@@ -1,9 +1,10 @@
-﻿using RestSharp;
+﻿using Negocio.Modelos;
+using RestSharp;
 namespace Negocio
 {
     public class ProductosAPI
     {
-        List<Producto> listaProductos = new List<Producto>();
+
 
         public List<Producto> GetAll() {
 
@@ -11,6 +12,7 @@ namespace Negocio
         }
         public Producto Post(Producto producto)
         {
+            producto.Id = Datos.listaProductos.Count +1;
             Datos.listaProductos.Add(producto);
             return producto;
         }
@@ -32,7 +34,7 @@ namespace Negocio
             var product = Datos.listaProductos.FirstOrDefault(item => item.Id == prod.Id);
             if (product == null)
             {
-                return null; 
+                return new Producto(-1, "", 0); 
             }
             Datos.listaProductos.Remove(product);
             Datos.listaProductos.Add(prod);

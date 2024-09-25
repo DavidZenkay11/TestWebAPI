@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Negocio;
+using Negocio.Modelos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -56,16 +57,16 @@ namespace TestWebAPI
         [HttpPost("products")]
         public IActionResult Post([FromBody] Producto producto)
         {
+            Producto productoCreado;
             try
             {
-                api.Post(producto);
+                productoCreado = api.Post(producto);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
 
-            var productoCreado = api.Post(producto);
             return StatusCode(201, productoCreado);
         }
 
@@ -75,10 +76,6 @@ namespace TestWebAPI
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState); // Devuelve 400 Bad Request.
-                }
                 product.Id = id;
                 var productoActualizado = api.Put(product);
                 if (productoActualizado == null)
