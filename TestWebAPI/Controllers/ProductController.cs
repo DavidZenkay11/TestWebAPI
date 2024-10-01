@@ -4,7 +4,7 @@ using Negocio.Modelos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace TestWebAPI
+namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -12,7 +12,7 @@ namespace TestWebAPI
     {
         ProductosAPI api = new ProductosAPI();
 
-        // GET: api/<ValuesController>/products
+        // GET: api/<ProductController>/products
         [HttpGet("products")]
         public IActionResult Get()
         {
@@ -33,7 +33,7 @@ namespace TestWebAPI
             }
         }
 
-        // GET api/<ValuesController>/products/5
+        // GET api/<ProductController>/products/5
         [HttpGet("products/{id}")]
         public IActionResult Get(int id)
         {
@@ -53,7 +53,7 @@ namespace TestWebAPI
             }
         }
 
-        // POST api/<ValuesController>/products
+        // POST api/<ProductController>/products
         [HttpPost("products")]
         public IActionResult Post([FromBody] Producto producto)
         {
@@ -70,7 +70,7 @@ namespace TestWebAPI
             return StatusCode(201, productoCreado);
         }
 
-        // PUT api/<ValuesController>/5
+        // PUT api/<ProductController>/5
         [HttpPut("products/{id}")]
         public IActionResult Put(int id, [FromBody] Producto product)
         {
@@ -89,7 +89,7 @@ namespace TestWebAPI
                 return BadRequest(ex.Message); // Devuelve 400 Bad Request con el mensaje de la excepción
             }
         }
-        // DELETE api/<ValuesController>/5
+        // DELETE api/<ProductController>/5
         [HttpDelete("products/{id}")]
         public IActionResult Delete(int id)
         {
