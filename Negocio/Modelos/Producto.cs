@@ -9,10 +9,11 @@ namespace Negocio.Modelos
 {
     public class Producto
     {
-        public Producto(int id, string name, int price)
+        public Producto(int id, string name, string description, decimal price)
         {
             Id = id;
             Name = name;
+            Description = description;
             Price = price;
         }
 
@@ -22,8 +23,10 @@ namespace Negocio.Modelos
         [Required(ErrorMessage = "El nombre es obligatorio.")]
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
         [Range(1, int.MaxValue, ErrorMessage = "El Precio debe ser un número mayor que cero.")]
-        public int Price { get; set; }
+        public decimal Price { get; set; }
     }
 
 }
