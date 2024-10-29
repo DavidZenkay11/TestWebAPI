@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -9,11 +10,13 @@ namespace Negocio.Modelos
 {
     public class Producto
     {
-        public Producto(int id, string name, string description, decimal price)
+        public Producto() { }
+        public Producto(int id, string title, string description,string category, decimal price)
         {
             Id = id;
-            Name = name;
+            Title = title;
             Description = description;
+            Category = category;
             Price = price;
         }
 
@@ -21,9 +24,11 @@ namespace Negocio.Modelos
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio.")]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         public string Description { get; set; }
+
+        public string Category { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "El Precio debe ser un número mayor que cero.")]
         public decimal Price { get; set; }

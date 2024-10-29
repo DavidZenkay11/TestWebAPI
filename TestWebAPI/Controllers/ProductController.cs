@@ -72,12 +72,12 @@ namespace TestWebAPI.Controllers
 
         // PUT api/<ProductController>/5
         [HttpPut("products/{id}")]
-        public IActionResult Put(int id, [FromBody] Producto product)
+        public IActionResult Put(int id, [FromBody] Producto producto)
         {
             try
             {
-                product.Id = id;
-                var productoActualizado = api.Put(product);
+                producto.Id = id;
+                var productoActualizado = api.Put(producto);
                 if (productoActualizado == null)
                 {
                     return NotFound(); // 404 Not Found si el producto no existe para actualizar
@@ -108,6 +108,13 @@ namespace TestWebAPI.Controllers
             {
                 return BadRequest(ex.Message); // Devuelve 400 Bad Request con el mensaje de la excepción
             }
+        }
+
+        [HttpGet("categories")]
+        public List<string> GetCategories() 
+        { 
+            ProductosAPI productosAPI = new ProductosAPI();
+            return productosAPI.GetAllCategories();
         }
     }
 }
