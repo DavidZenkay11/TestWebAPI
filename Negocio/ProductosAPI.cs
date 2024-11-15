@@ -7,24 +7,16 @@ namespace Negocio
     public class ProductosAPI
     {
 
-        string connstring = "Server=sql10.freemysqlhosting.net;Database=sql10741376;Uid=sql10741376;Pwd=vqRiz5UenI;";
+        string connstring = "Server=db4free.net;Database=lasnieves110424;Uid=lasnieves110424;Pwd=lasnieves110424;";
         public List<Producto> GetAll() {
             List<Producto> ListaProductos = new List<Producto>();
             MySqlConnection conn = new MySqlConnection(connstring);
 
             conn.Open();
-            // MySqlCommand cmd = conn.CreateCommand();
+
             string sql = "SELECT Id,Description,Title,Price FROM Products";
             ListaProductos = conn.Query<Producto>(sql).ToList();
-            /* while (reader.Read()) 
-             {
-                 int id = reader.GetInt32("id");
-                 string name = reader.GetString("name");
-                 string description = reader.GetString("description");
-                 decimal price = reader.GetDecimal("price");
-                 Producto p = new Producto(id, name, description, 0);
-                 ListaProductos.Add(p);
-             }*/
+
 
             return ListaProductos;
         }
@@ -33,15 +25,21 @@ namespace Negocio
             using (MySqlConnection connection = new MySqlConnection(connstring))
             {
                 connection.Open();
-                MySqlCommand cmd = connection.CreateCommand();
-                cmd.CommandText = $"INSERT INTO Productos ('Description','Title') VALUES (\"{""}\",\"{producto.Title}\")";
-                int resultado = cmd.ExecuteNonQuery();
-            }
-            /*producto.Id = Datos.listaProductos.Count +1;
-            Datos.listaProductos.Add(producto);*/
-            return producto;
-        }
 
+                string sql = "INSERT INTO Products (Title, Description, Category, Price) VALUES (@Title, @Description, @Category, @Price)";
+
+              
+                int resultado = connection.Execute(sql, new
+                {
+                    Title = producto.Title,
+                    Description = producto.Description,
+                    Category = producto.Category,
+                    Price = producto.Price
+                });
+
+                return producto;
+            }
+        }
         public Producto GetById(int _id)
         {
             MySqlConnection conn = new MySqlConnection(connstring);
@@ -55,23 +53,44 @@ namespace Negocio
 
         public int Delete(int id)
         {
-            return Datos.listaProductos.RemoveAll(item => item.Id == id);
+            using (MySqlConnection connection = new MySqlConnection(connstring))
+            {
+                connection.Open();
+                MySqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "DELETE FROM Products WHERE Id = @id";
+                cmd.Parameters.AddWithValue("@id", id);
+
+                int resultado = cmd.ExecuteNonQuery();
+                return resultado;
+            }
         }
+
         public Producto Put(Producto producto)
         {
-            MySqlConnection connection = new MySqlConnection(connstring);
-            connection.Open();
-            string sql = "update Products set 'price' = @price where id = @id";
-            int insertados = connection.Execute(sql, new { price = producto.Price, name = producto.Id });
-            return producto;
-            /*var product = Datos.listaProductos.FirstOrDefault(item => item.Id == prod.Id);
-            if (product == null)
+            using (MySqlConnection connection = new MySqlConnection(connstring))
             {
-                return new Producto(-1, "", "", 0); 
+                connection.Open();
+
+                string sql = "UPDATE Products SET Title = @Title, Description = @Description, Category = @Category, Price = @Price WHERE Id = @Id";
+
+                int filasAfectadas = connection.Execute(sql, new
+                {
+                    Title = producto.Title,
+                    Description = producto.Description,
+                    Category = producto.Category,
+                    Price = producto.Price,
+                    Id = producto.Id
+                });
+
+                if (filasAfectadas > 0)
+                {
+                    return producto; // Devuelve el producto si la actualización fue exitosa
+                }
+                else
+                {
+                    return null; // Si no se actualizó nada, devuelve null
+                }
             }
-            Datos.listaProductos.Remove(product);
-            Datos.listaProductos.Add(prod);
-            return prod;*/
         }
         public List<string> GetAllCategories()
         {
