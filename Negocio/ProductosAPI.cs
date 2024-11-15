@@ -42,11 +42,11 @@ namespace Negocio
         }
         public Producto GetById(int _id)
         {
-            MySqlConnection conn = new MySqlConnection(connstring);
+            MySqlConnection connection = new MySqlConnection(connstring);
 
-            conn.Open();
+            connection.Open();
             string sql = "SELECT Id,Description,Title,Price FROM Products where id = @id";
-            Producto producto = conn.QueryFirst<Producto>(sql, new { id = _id });
+            Producto producto = connection.QueryFirst<Producto>(sql, new { id = _id });
 
             return producto;
         }
@@ -78,17 +78,16 @@ namespace Negocio
                     Title = producto.Title,
                     Description = producto.Description,
                     Category = producto.Category,
-                    Price = producto.Price,
-                    Id = producto.Id
+                    Price = producto.Price
                 });
 
                 if (filasAfectadas > 0)
                 {
-                    return producto; // Devuelve el producto si la actualización fue exitosa
+                    return producto; 
                 }
                 else
                 {
-                    return null; // Si no se actualizó nada, devuelve null
+                    return null; 
                 }
             }
         }

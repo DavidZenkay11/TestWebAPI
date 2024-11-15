@@ -2,7 +2,6 @@
 using Negocio;
 using Negocio.Modelos;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TestWebAPI.Controllers
 {
@@ -22,14 +21,14 @@ namespace TestWebAPI.Controllers
 
                 if (productos == null || !productos.Any())
                 {
-                    return NoContent(); // 204 No Content no hay productos
+                    return NotFound(new { Message = "No se encontraron productos." }); 
                 }
 
-                return Ok(productos); // 200 OK
+                return Ok(productos); 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message); // Devuelve 400 Bad Request con el mensaje de la excepción
+                return StatusCode(500, new { Message = "Hubo un error al obtener los productos.", Error = ex.Message }); 
             }
         }
 
@@ -43,13 +42,13 @@ namespace TestWebAPI.Controllers
 
                 if (producto == null)
                 {
-                    return NotFound(); // 404 Not Found no se encontró el producto con esa ID
+                    return NotFound(new { Message = "Producto no encontrado." }); 
                 }
-                return Ok(producto); // 200 OK
+                return Ok(producto); 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message); // Devuelve 400 Bad Request con el mensaje de la excepción
+                return StatusCode(500, new { Message = "Hubo un error al obtener el producto.", Error = ex.Message }); 
             }
         }
 
@@ -61,13 +60,18 @@ namespace TestWebAPI.Controllers
             try
             {
                 productoCreado = api.Post(producto);
+
+                if (productoCreado == null)
+                {
+                    return BadRequest(new { Message = "No se pudo crear el producto." }); 
+                }
+
+                return StatusCode(201, productoCreado); 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = "Hubo un error al crear el producto.", Error = ex.Message }); 
             }
-
-            return StatusCode(201, productoCreado);
         }
 
         // PUT api/<ProductController>/5
@@ -78,15 +82,17 @@ namespace TestWebAPI.Controllers
             {
                 producto.Id = id;
                 var productoActualizado = api.Put(producto);
+
                 if (productoActualizado == null)
                 {
-                    return NotFound(); // 404 Not Found si el producto no existe para actualizar
+                    return NotFound(new { Message = "Producto no encontrado." }); 
                 }
-                return Ok(productoActualizado); // 200 OK si se actualiza correctamente
+
+                return Ok(productoActualizado); 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message); // Devuelve 400 Bad Request con el mensaje de la excepción
+                return BadRequest(new { Message = "Hubo un error al actualizar el producto.", Error = ex.Message }); 
             }
         }
         // DELETE api/<ProductController>/5
@@ -97,24 +103,38 @@ namespace TestWebAPI.Controllers
             {
                 var eliminado = api.Delete(id);
 
-                if (eliminado == 0) // Si no se borró nada, eliminado debería ser 0.
+                if (eliminado == 0)
                 {
-                    return NotFound(); // 404 Not Found si el producto no existe para eliminar
+                    return NotFound(new { Message = "Producto no encontrado para eliminar." }); 
                 }
 
-                return NoContent(); // 204 No Content si funcionó correctamente
+                return NoContent(); 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message); // Devuelve 400 Bad Request con el mensaje de la excepción
+                return BadRequest(new { Message = "Hubo un error al eliminar el producto.", Error = ex.Message }); 
             }
         }
 
         [HttpGet("categories")]
-        public List<string> GetCategories() 
-        { 
-            ProductosAPI productosAPI = new ProductosAPI();
-            return productosAPI.GetAllCategories();
+        public IActionResult GetCategories()
+        {
+            try
+            {
+                ProductosAPI productosAPI = new ProductosAPI();
+                var categorias = productosAPI.GetAllCategories();
+
+                if (categorias == null || !categorias.Any())
+                {
+                    return NotFound(new { Message = "No se encontraron categorías." });
+                }
+
+                return Ok(categorias); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Hubo un error al obtener las categorías.", Error = ex.Message });
+            }
         }
     }
 }
